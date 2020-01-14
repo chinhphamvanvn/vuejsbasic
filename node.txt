@@ -1,0 +1,5 @@
+git clone http....
+
+npm install
+
+npm run dev
