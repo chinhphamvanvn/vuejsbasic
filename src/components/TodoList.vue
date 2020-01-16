@@ -4,18 +4,8 @@
             @keyup.enter="addTodo">
 
         <transition-group name="fade" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
-            <div v-for="(todo, index) in todosFiltered" :key="todo.id" class="todo-item">
-                <div class="todo-item-left">
-                    <input class="input-checkbox" type="checkbox" v-model="todo.completed">
-                    <div v-if="!todo.editing" @dblclick="editTodo(todo)" class="todo-item-label" :class="{ completed : todo.completed}">{{todo.title}}</div>
-                    <input v-else class="todo-item-edit" type="text" v-model="todo.title" 
-                    @blur="doneEdit(todo)" @keyup.enter="doneEdit(todo)" @keyup.esc="cancelEdit(todo)" v-focus>
-                </div>
-
-                <div class="remove-item" @click="removeTodo(index)">
-                    &times;
-                </div>
-            </div>
+            <todo-item v-for="(todo, index) in todosFiltered" :key="todo.id" :todo="todo" :index="index" @removedTodo="removeTodo" @finishedEdit="finishedEdit" :checkAll="!anyRemaining">
+            </todo-item >
         </transition-group>
 
         <div class="extra-container">
@@ -92,13 +82,7 @@ export default {
         }
 
     },
-    directives:{
-        focus: {
-            inserted: function (el){
-                el.focus()
-            }
-        }
-    },
+    
     methods: {
         addTodo(){
             if(this.newTodo.trim().length === 0){
@@ -116,28 +100,15 @@ export default {
             this.todos.splice(index, 1);
         },
 
-        doneEdit(todo){
-            if(todo.title.trim().length == ''){
-                todo.title = this.beforeEditCache;
-            }
-            todo.editing = false;
-        },
-
-        cancelEdit(todo){
-            todo.title = this.beforeEditCache;
-            todo.editing = false;
-        },
-
-        editTodo(todo){
-            this.beforeEditCache = todo.title;
-            todo.editing = true;
-        },
-
         checkAllTodos(){
             this.todos.forEach((todo) => todo.completed = event.target.checked);
         },
         clearCompleted(){
             this.todos = this.todos.filter(todo => !todo.completed);
+        },
+
+        finishedEdit(data){
+            this.todos.splice(data.index, 1, data.todo);
         }
     }
 }
