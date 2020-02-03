@@ -49,6 +49,10 @@ export default {
         }
     },
 
+    created(){
+        this.$store.dispatch('retrieveTodos')
+    },
+
     computed: {
         remaining(){
             return this.$store.getters.remaining
