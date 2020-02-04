@@ -1,27 +1,13 @@
 import Vue from 'vue' 
 import Vuex from 'vuex'
-import axios from 'axios'
+import db from '../firebase'
 
 Vue.use(Vuex)
-axios.defaults.baseURL = 'http://localhost:8000/api'
 
 export const store = new Vuex.Store({
     state: {
         filter: 'all',
-        todos: [
-            // {
-            //     'id': 1,
-            //     'title': 'Finish Vue Screencast',
-            //     'completed': false,
-            //     'editing': false
-            // },
-            // {
-            //     'id': 2,
-            //     'title': 'Take over world',
-            //     'completed': false,
-            //     'editing': false
-            // }
-        ]
+        todos: []
     },
 
     getters: {
@@ -88,12 +74,19 @@ export const store = new Vuex.Store({
 
     actions:{
         retrieveTodos(context){
-            axios.get('/todos')
-            .then(response => {
-                context.commit('retrieveTodos', response.data)
-            })
-            .catch(error => {
-                console.log(error)
+            db.collection('todos').get()
+            .then(querySnapshot => {
+                let tempTodos = [];
+                querySnapshot.forEach(doc => {
+                    console.log(doc.data());
+                    const data = {
+                        id: doc.id,
+                        title: doc.data().title,
+                        completed: doc.data().completed
+                    }
+                    tempTodos.push(data)
+                })
+                context.commit('retrieveTodos', tempTodos)
             })
         },
 
