@@ -26,8 +26,7 @@ export const store = new Vuex.Store({
 
     getters: {
         remaining(state){
-            let a = state.todos.filter(todo => !todo.completed);
-            return a.length;
+            return state.todos.filter(todo => !todo.completed).length
         },
         anyRemaining(state, getters){
             return getters.remaining !=0
@@ -71,8 +70,8 @@ export const store = new Vuex.Store({
             state.todos.splice(index, 1);
         },
 
-        checkAll(state, checked){
-            state.todos.forEach((todo) => todo.completed = event.target.checked);
+        checkAll(state, checked) {
+            state.todos.forEach(todo => (todo.completed = checked))
         },
 
         updateFilter(state, filter){
